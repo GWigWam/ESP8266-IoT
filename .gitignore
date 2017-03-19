@@ -5,6 +5,9 @@
 /ESPlorer
 /LuaLoader
 
+#Ignore pwd file
+/Scripts/secret.lua
+
 ### Default Lua ignore:
 # Compiled Lua sources
 luac.out

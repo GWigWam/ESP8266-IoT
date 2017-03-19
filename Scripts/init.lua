@@ -3,10 +3,10 @@ print('\r\n-- start of init.lua --\r\n')
 dofile('util.lua')
 dofile('leds.lua')
 
-wifi.setmode(wifi.STATION)
+-- Sets ssid and pwd vars, also sets ThingSpeak private write key
+dofile('secret.lua')
 
-ssid = 'Do not upload to GitHub'
-pwd = 'Do not upload to GitHub'
+wifi.setmode(wifi.STATION)
 
 wifi.sta.sethostname("ESP8266-WG")
 wifi.sta.config(ssid, pwd)
