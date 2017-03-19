@@ -2,6 +2,7 @@ print('\r\n-- start of init.lua --\r\n')
 
 dofile('util.lua')
 dofile('leds.lua')
+dofile('dht.lua')
 
 -- Sets ssid and pwd vars, also sets ThingSpeak private write key
 dofile('secret.lua')
@@ -38,3 +39,6 @@ conTmr = tmrRepeat(500, function()
         end)
     end
 end)
+
+dofile("ThingSpeakTemp.lua")
+startTSService()
