@@ -42,3 +42,6 @@ end)
 
 dofile("ThingSpeakTemp.lua")
 startTSService()
+
+dofile("statusHost.lua")
+createStatusHost()
