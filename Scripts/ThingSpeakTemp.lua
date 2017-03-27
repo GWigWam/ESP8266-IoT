@@ -26,7 +26,6 @@ function setupTS()
     end)
     
     tsCon:on("disconnection", function(tsCon, payloadout)
-        print("disconnection: "..payloadout)
         collectgarbage();
     end)
     
