@@ -1,34 +1,36 @@
 function receiver(sck, data)
-    local response = {}
+    local rsp = {}
     
-    -- sends and removes the first element from the 'response' table
+    -- sends and removes the first element from the 'rsp' table
     local function send(localSocket)
-        if #response > 0 then
-            localSocket:send(table.remove(response, 1))
+        if #rsp > 0 then
+            localSocket:send(table.remove(rsp, 1))
         else
             localSocket:close()
-            response = nil
+            rsp = nil
         end
     end
-       
-    response[#response + 1] = "HTTP/1.0 200 OK\r\nServer: NodeMCU on ESP8266\r\n\r\n"
+    table.insert(rsp, "HTTP/1.0 200 OK\r\nServer: NodeMCU on ESP8266\r\n\r\n")
     
     reqUrl = string.sub(string.match(data, 'GET /%w*'),5,-1)
-    print('Incomming request to ' .. reqUrl)
+    log('Incomming request to ' .. reqUrl)
     if reqUrl == '/' then
         success, temp, humi = getDHTStats()
         if success then
-            response[#response + 1] = "Temp=" .. temp .. "C, Humi=" .. humi .. "%"
+            table.insert(rsp, "Temp=" .. temp .. "C, Humi=" .. humi .. "%")
         else
-            response[#response + 1] = "Measurement failed"
+            table.insert(rsp, "Measurement failed")
         end
+        table.insert(rsp,"\r\n\r\nLOG:")
+        table.foreach(lLog, function(k,v)table.insert(rsp, '\r\n  > '..v)end)
     elseif reqUrl == '/flash' then
         flash(lGrn,500)
         tmrDelay(400,function() flash(lRed,500)end)
     else
-        response[#response + 1] = "URL not in use"
+        table.insert(rsp, "URL not in use")
     end
     
+    table.insert(rsp, '\r\n')
     sck:on("sent", send)    
     send(sck)
 end
@@ -38,7 +40,7 @@ function createStatusHost()
     srv:listen(80, function(conn)
         conn:on("receive", receiver)
     end)
-    print('started statusHost')
+    log('started statusHost')
     
     function stopStatusHost()
         srv:close()
