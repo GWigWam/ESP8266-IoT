@@ -5,9 +5,9 @@ function getDHTStats()
         return true, temp, humi
     else
         if status == dht.ERROR_CHECKSUM then
-            print( "DHT Checksum error." )
+            log("DHT Checksum error.")
         elseif status == dht.ERROR_TIMEOUT then
-            print( "DHT timed out." )
+            log("DHT timed out.")
         end
         flash(lRed,1000)
         return false, -999, -999

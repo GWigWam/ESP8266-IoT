@@ -6,16 +6,15 @@ function setupTS()
  
     tsCon:on("receive", function(tsCon, payloadout)
         if (string.find(payloadout, "Status: 200 OK") ~= nil) then
-            print("Posted OK");
+            log("Stat send success 200 (OK)");
             flash(lGrn,50)
         else
-            print("Posted failed: "..payloadout)
+            log("Stat send failed: "..payloadout)
+            flash(lRed,50)
         end
     end)
  
     tsCon:on("connection", function(tsCon, payloadout)
-        print ("Posting...");
-  
         tsCon:send("GET /update?api_key="..tsApiKey.."&field1="..tsField1.."&field2="..tsField2
         .. " HTTP/1.1\r\n"
         .. "Host: api.thingspeak.com\r\n"
@@ -40,7 +39,7 @@ function tsTick()
     local tsMinMeasureCount = 3
     success, temp, humi = getDHTStats()
     if success then
-        print('Took succesfull measurement, T='..temp..' H='..humi)
+        log('Took succesfull measurement, T='..temp..'c H='..humi..'%')
         table.insert(tsTempBuffer, temp)
         table.insert(tsHumiBuffer, humi)
                 
@@ -61,6 +60,7 @@ function startTSService()
         tsSendFunc = setupTS()
     end
     tsTmr = tmrRepeat(tsReportIntervalMs, tsTick)
+    log('started ThingSpeakTemp')
 end
 
 function stopTSService()
