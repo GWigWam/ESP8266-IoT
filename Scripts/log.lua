@@ -12,10 +12,15 @@ end
 
 function logPrint()table.foreach(lLog,function(k,v)print(v)end)end
 
-function logWrite(file)
-  file.open(file)
+function logWrite(path)
+  file.open(path,'w')
   table.foreach(lLog,function(k,v)file.writeline(v)end)
   file.close()
+end
+
+function startLogBackup()
+    tmrRepeat(1000*60*30,function() logWrite('log.txt') end)
+    log('log backup started')
 end
 
 log("Initialized 'log.lua'. Max log size=" .. lLogSize)
