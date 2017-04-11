@@ -10,7 +10,9 @@ table.foreach(lLeds,function(k,v)
 end)
 
 function flash(led, durationMs)
-    gpio.write(led,gpio.HIGH)
+    table.foreach(lLeds,function(k,v)
+        if v == led then gpio.write(v,gpio.HIGH) else gpio.write(v,gpio.LOW)end
+    end)
     tmrDelay(durationMs, function()
         gpio.write(led,gpio.LOW)
     end)
