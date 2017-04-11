@@ -25,9 +25,10 @@ function receiver(sck, data)
         table.foreach(lLog, function(k,v)table.insert(rsp, '\r\n  > '..v)end)
     elseif reqUrl == '/flash' then
         flash(lGrn,500)
-        tmrDelay(400,function() flash(lRed,500)end)
+        tmrDelay(500,function() flash(lRed,500)end)
+        tmrDelay(1000,function() flash(lBlu,500)end)
     else
-        table.insert(rsp, "URL not in use")
+        rsp = {"HTTP/1.0 404 NOT FOUND\r\n"}
     end
     
     table.insert(rsp, '\r\n')
