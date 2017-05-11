@@ -1,16 +1,6 @@
 function receiver(sck, data)
     local rsp = {}
-    
-    -- sends and removes the first element from the 'rsp' table
-    local function send(localSocket)
-        if #rsp > 0 then
-            localSocket:send(table.remove(rsp, 1))
-        else
-            localSocket:close()
-            rsp = nil
-        end
-    end
-    table.insert(rsp, "HTTP/1.0 200 OK\r\nServer: NodeMCU on ESP8266\r\n\r\n")
+    table.insert(rsp, "HTTP/1.0 200 OK\r\nServer: NodeMCU on ESP8266\r\n")
     
     reqUrl = string.sub(string.match(data, 'GET /%w*'),5,-1)
     log('Incomming request to ' .. reqUrl)
@@ -21,8 +11,8 @@ function receiver(sck, data)
         else
             table.insert(rsp, "Measurement failed")
         end
-        table.insert(rsp,"\r\n\r\nLOG:")
-        table.foreach(lLog, function(k,v)table.insert(rsp, '\r\n  > '..v)end)
+        table.insert(rsp,"\r\nLOG:")
+        table.foreach(lLog, function(k,v)table.insert(rsp, ' > '..v)end)
     elseif reqUrl == '/flash' then
         flash(lGrn,500)
         tmrDelay(500,function() flash(lRed,500)end)
@@ -31,9 +21,13 @@ function receiver(sck, data)
         rsp = {"HTTP/1.0 404 NOT FOUND\r\n"}
     end
     
-    table.insert(rsp, '\r\n')
-    sck:on("sent", send)    
-    send(sck)
+    table.insert(rsp, '\r\n\r\n')
+    full = table.concat(rsp, '\r\n')
+    sck:send(full)
+    sck:on("sent", function()
+        sck:close()
+        rsp = nil
+    end)
 end
 
 function createStatusHost()
@@ -45,5 +39,6 @@ function createStatusHost()
     
     function stopStatusHost()
         srv:close()
+        log('stop statusHost')
     end
 end
