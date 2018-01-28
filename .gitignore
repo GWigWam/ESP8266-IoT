@@ -1,5 +1,6 @@
 /Config
 /Usb-COM driver
+wrk.lua
 
 #Ignore IDEs
 /ESPlorer
