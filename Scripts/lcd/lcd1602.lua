@@ -22,23 +22,16 @@ end
 -- Calls send4b twice to send full byte.
 local sendByte = function(self, vals, rs)
     if type(vals) ~= "table" then vals = {vals} end
-    
-    local debStr = string.format("snd (%i):", #vals)
-    for i = 1, #vals do
-        debStr = string.format("%s 0x%02X |", debStr, vals[i])
-    end
-    print(debStr)
-    
+
     local tbl = { }
+    local debStr = string.format("snd (%i):", #vals)
     for i = 1, #vals do
         table.insert(tbl, bit.band(vals[i], 0xF0))
         table.insert(tbl, bit.lshift(bit.band(vals[i], 0x0F), 4))
+        debStr = string.format("%s 0x%02X |", debStr, vals[i])
     end
     send4b(self, tbl, rs)
-end
-
-local sendChar = function(self, char)
-    sendByte(self, string.byte(char), true)
+    print(debStr)
 end
 
 local init = function(self) -- As specified on page 46 of HD44780U specsheet
@@ -69,6 +62,10 @@ end
 
 local setCursor = function(self, col, row)
     sendByte(self, bit.bor(self.const["SETDDRAMADDR"], self.row_offsets[row + 1], col))
+end
+
+local sendChar = function(self, char)
+    sendByte(self, string.byte(char), true)
 end
 
 local sendStr = function(self, str)
