@@ -38,7 +38,7 @@ return {
     ["BACKLIGHT"]   = 0x08,
     ["NOBACKLIGHT"] = 0x00,
 
-    ["EnBit"] = 0x04, -- 00000100 Enable bit
-    ["RwBit"] = 0x02, -- 00000010 Read/Write bit
-    ["RsBit"] = 0x01, -- 00000001 Register select bit
+    ["EnBit"] = 0x04, -- 00000100 Enable bit (Starts read/write)
+    ["RwBit"] = 0x02, -- 00000010 Read/Write bit (0: Write, 1: Read)
+    ["RsBit"] = 0x01, -- 00000001 Register select bit (0: Instruction register, 1: Data register)
 }

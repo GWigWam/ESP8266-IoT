@@ -1,17 +1,16 @@
 -- lcd1602.lua by GWigWam
 
-local send = function(self, vals, rs)
+-- Send 4 bits, 4 most significant bits of each byte 'val' in @vals table will be sent.
+--  Pass @rs bool to set register selector (RS) pin: 0 = instruction register, 1 = data register.
+local send4b = function(self, vals, rs)
+    -- TODO? Strip 4 least sign bits from vals
+    -- TODO? use params ( ... )
     if type(vals) ~= "table" then vals = {vals} end
+
     local blBit = self.bl and self.const["BACKLIGHT"] or self.const["NOBACKLIGHT"]
     local rsBit = rs and self.const["RsBit"] or 0x00
 
-    local debStr = string.format("snd (%i):", #vals)
-    for i = 1, #vals do
-        debStr = string.format("%s 0x%02X |", debStr, vals[i])
-    end
-    print(debStr)
-    
-    local tbl = { 0x00 } -- TODO, might not be necisary, use '{ }' instead
+    local tbl = { }
     for i = 1, #vals do
         local payl = bit.bor(vals[i], blBit, rsBit)
         table.insert(tbl, bit.bor(payl, self.const["EnBit"]))
@@ -20,44 +19,56 @@ local send = function(self, vals, rs)
     i2cw(tbl)
 end
 
+-- Calls send4b twice to send full byte.
+local sendByte = function(self, vals, rs)
+    if type(vals) ~= "table" then vals = {vals} end
+    
+    local debStr = string.format("snd (%i):", #vals)
+    for i = 1, #vals do
+        debStr = string.format("%s 0x%02X |", debStr, vals[i])
+    end
+    print(debStr)
+    
+    local tbl = { }
+    for i = 1, #vals do
+        table.insert(tbl, bit.band(vals[i], 0xF0))
+        table.insert(tbl, bit.lshift(bit.band(vals[i], 0x0F), 4))
+    end
+    send4b(self, tbl, rs)
+end
+
 local sendChar = function(self, char)
-    local c = string.byte(char)
-    local m0 = bit.band(c, 0xF0)
-    local m1 = bit.lshift(bit.band(c, 0x0F), 4)
-    send(self, {m0,m1}, true)
+    sendByte(self, string.byte(char), true)
 end
 
 local init = function(self) -- As specified on page 46 of HD44780U specsheet
-    send(self, 0x30) -- set 8bit interface
+    send4b(self, 0x30) -- set 8bit interface
     tmr.delay(4500)  -- 4.1ms
-    send(self, 0x30)
+    send4b(self, 0x30)
     tmr.delay(4500)
-    send(self, 0x30)
+    send4b(self, 0x30)
     tmr.delay(120) -- 100ns
+    send4b(self, { bit.bor(self.const["FUNCTIONSET"], self.const["4BITMODE"]) }) -- Set 4-bit mode
 
     local func = bit.bor(self.const["4BITMODE"], self.const["2LINE"], self.const["5x8DOTS"])
     local cntr = bit.bor(self.const["DISPLAYON"], self.const["CURSORON"], self.const["BLINKON"])
     local mode = bit.bor(self.const["ENTRYLEFT"], self.const["ENTRYSHIFTDECREMENT"])
 
-    send(self, { bit.bor(self.const["FUNCTIONSET"], self.const["4BITMODE"]) }) -- Set 4-bit mode
-    send(self, { self.const["FUNCTIONSET"], bit.lshift(func, 4) }) -- Function set (NoLines, Font)
-    send(self, { 0x00, bit.lshift(bit.bor(self.const["DISPLAYCONTROL"], cntr), 4) }) -- Control set (On/off, Cursor, Blink)
+    sendByte(self, bit.bor(self.const["FUNCTIONSET"], func)) -- Function set (NoLines, Font)
+    sendByte(self, bit.bor(self.const["DISPLAYCONTROL"], cntr)) -- Control set (On/off, Cursor, Blink)
     self:cls()
-    send(self, { 0x00, bit.lshift(bit.bor(self.const["ENTRYMODESET"], mode), 4) }) --Entry mode set (Align, Disp. shift)
-    
+    sendByte(self, bit.bor(self.const["ENTRYMODESET"], mode)) --Entry mode set (Align, Disp. shift)
+
     tmr.delay(2000)
 end
 
 local cls = function(self)
-    send(self, {0x00, bit.lshift(self.const["CLEARDISPLAY"], 4)})
+    sendByte(self, self.const["CLEARDISPLAY"])
     tmr.delay(2000)
 end
 
 local setCursor = function(self, col, row)
-    send(self, {
-        bit.bor(self.const["SETDDRAMADDR"], self.row_offsets[row + 1]),
-        bit.lshift(col, 4)
-    })
+    sendByte(self, bit.bor(self.const["SETDDRAMADDR"], self.row_offsets[row + 1], col))
 end
 
 local sendStr = function(self, str)
