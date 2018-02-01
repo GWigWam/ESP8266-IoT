@@ -3,7 +3,6 @@
 -- Send 4 bits, 4 most significant bits of each byte 'val' in @vals table will be sent.
 --  Pass @rs bool to set register selector (RS) pin: 0 = instruction register, 1 = data register.
 local send4b = function(self, vals, rs)
-    -- TODO? Strip 4 least sign bits from vals
     -- TODO? use params ( ... )
     if type(vals) ~= "table" then vals = {vals} end
 
@@ -12,7 +11,8 @@ local send4b = function(self, vals, rs)
 
     local tbl = { }
     for i = 1, #vals do
-        local payl = bit.bor(vals[i], blBit, rsBit)
+        local cur = bit.band(vals[i], 0xF0)
+        local payl = bit.bor(cur, blBit, rsBit)
         table.insert(tbl, bit.bor(payl, self.const["EnBit"]))
         table.insert(tbl, payl)
     end
