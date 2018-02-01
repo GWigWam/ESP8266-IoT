@@ -3,7 +3,6 @@
 -- Send 4 bits, 4 most significant bits of each byte 'val' in @vals table will be sent.
 --  Pass @rs bool to set register selector (RS) pin: 0 = instruction register, 1 = data register.
 local send4b = function(self, vals, rs)
-    -- TODO? use params ( ... )
     if type(vals) ~= "table" then vals = {vals} end
 
     local blBit = self.bl and self.const["BACKLIGHT"] or self.const["NOBACKLIGHT"]
