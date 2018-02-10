@@ -45,9 +45,9 @@ local function onReceive(sck, data)
     sck:on("sent", function() sck:close() end)
 end
 
-local function init(self)
+local function init(self, port)
     self.srv = net.createServer(net.TCP)
-    self.srv:listen(80, function(sck) sck:on("receive", onReceive) end)
+    self.srv:listen(port or 80, function(sck) sck:on("receive", onReceive) end)
 end
 
 local function stop(self) self.srv:close() end
@@ -57,15 +57,15 @@ local function addHandler(self, fnc)
 end
 
 local function lastHandler(req)
-    return true, { status = "404 Not Found", headers = { Test = "val", ["Content-Type"] = "plain/text" }, body = "No resource found." }
+    return true, { status = "404 Not Found", headers = { ["Content-Type"] = "plain/text" }, body = "No resource found." }
 end
 
 -- Class def:
-return function()
+return function(port)
     print("'httpserver.lua'")
     local meta = { __index = { stop = stop, addHandler = addHandler } }
     local this = setmetatable(state, meta)
-    init(this)
+    init(this, port)
     addHandler(this, lastHandler)
     return this
 end

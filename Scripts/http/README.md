@@ -6,7 +6,7 @@ Simple http server implementation that allows the registration of 'handlers' for
 
 Example useage:
 
-    http = dofile("httpserver.lua")() -- Init, opens port 80 and listens for incomming HTTP
+    http = dofile("httpserver.lua")(80) -- Init, opens port 80 and listens for incomming HTTP
 
 Example of a 'handler' function which receives the request as a param and can decide to handle it or not.
 
