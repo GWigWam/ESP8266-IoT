@@ -6,10 +6,10 @@ function setupTS()
  
     tsCon:on("receive", function(tsCon, payloadout)
         if (string.find(payloadout, "Status: 200 OK") ~= nil) then
-            log("Stat send success 200 (OK)");
+            print("Stat send success 200 (OK)");
             flash(lGrn,50)
         else
-            log("Stat send failed: "..payloadout)
+            print("Stat send failed: "..payloadout)
             flash(lRed,50)
         end
     end)
@@ -39,7 +39,7 @@ function tsTick()
     local tsMinMeasureCount = 3
     success, temp, humi = getDHTStats()
     if success then
-        log('Took succesfull measurement, T='..temp..'c H='..humi..'%')
+        print('Took succesfull measurement, T='..temp..'c H='..humi..'%')
         table.insert(tsTempBuffer, temp)
         table.insert(tsHumiBuffer, humi)
                 
@@ -60,7 +60,7 @@ function startTSService()
         tsSendFunc = setupTS()
     end
     tsTmr = tmrRepeat(tsReportIntervalMs, tsTick)
-    log('started ThingSpeakTemp')
+    print('started ThingSpeakTemp')
 end
 
 function stopTSService()

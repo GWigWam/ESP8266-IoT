@@ -1,4 +1,4 @@
-log("Init 'util.lua'")
+print("'util.lua'")
 
 function tablePrint(tIn)
     for i = 1, #tIn, 1 do

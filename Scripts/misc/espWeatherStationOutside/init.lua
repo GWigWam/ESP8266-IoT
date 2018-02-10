@@ -1,6 +1,6 @@
-print('\r\n-- start of init.lua --\r\n')
+uart.setup(0, 921600, 8, 0, 1, 1 )
+print('init.lua')
 
-dofile('log.lua')
 dofile('util.lua')
 dofile('leds.lua')
 dofile('dht.lua')
@@ -10,10 +10,8 @@ dofile('wifiEvents.lua')
 
 dofile("ThingSpeakTemp.lua")
 startTSService()
-dofile("statusHost.lua")
-createStatusHost()
-
-startLogBackup()
+http = dofile("httpserver.lua")(80)
+dofile("hostDHT.lua")(http)
 
 wifi.setmode(wifi.STATION)
 wifi.sta.sethostname("ESP8266-WG")

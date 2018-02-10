@@ -1,4 +1,4 @@
-print("init 'leds.lua'")
+print("'leds.lua'")
 
 lGrn = 1
 lRed = 2
