@@ -43,7 +43,7 @@ local init = function(self) -- As specified on page 46 of HD44780U specsheet
     send4b(self, { bit.bor(self.const["FUNCTIONSET"], self.const["4BITMODE"]) }) -- Set 4-bit mode
 
     local func = bit.bor(self.const["4BITMODE"], self.const["2LINE"], self.const["5x8DOTS"])
-    local cntr = bit.bor(self.const["DISPLAYON"], self.const["CURSORON"], self.const["BLINKON"])
+    local cntr = bit.bor(self.const["DISPLAYON"], self.const["CURSOROFF"], self.const["BLINKOFF"])
     local mode = bit.bor(self.const["ENTRYLEFT"], self.const["ENTRYSHIFTDECREMENT"])
 
     sendByte(self, bit.bor(self.const["FUNCTIONSET"], func)) -- Function set (NoLines, Font)
@@ -56,7 +56,7 @@ end
 
 local cls = function(self)
     sendByte(self, self.const["CLEARDISPLAY"])
-    tmr.delay(2000)
+    tmr.delay(500 * 1000)
 end
 
 local setCursor = function(self, col, row)
@@ -77,6 +77,6 @@ local meta = { __index = { init = init, cls = cls, setCursor = setCursor, sendSt
 local state = {
     bl = true,
     row_offsets = { 0x00, 0x40 },
-    const = dofile("lcd1602_const.lua")
+    const = dofile("lcd1602_const.lc")
 }
 return setmetatable(state, meta)
