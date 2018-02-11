@@ -1,10 +1,13 @@
-print "'i2c.lua'"
+print("'i2c.lua'")
 
 sda = 2
 scl = 1
 adr = 0x3F
 i2cdebug = true
-i2c.setup(0, sda, scl, i2c.SLOW)
+
+function i2cinit()
+    i2c.setup(0, sda, scl, i2c.SLOW)
+end
 
 function i2cw(data)
     i2c.start(0)
