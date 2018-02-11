@@ -37,7 +37,7 @@ local function onReceive(sck, data)
         table.insert(rsp, string.format("%s: %s", hn, hv))
     end
     if hdata.body then
-        table.insert(rsp, string.format("Content-Length: %i", #hdata.body))
+        table.insert(rsp, string.format("Content-Length: %i", #hdata.body + 2))
         table.insert(rsp, string.format("\r\n%s\r\n", hdata.body))
     end
     full = table.concat(rsp, '\r\n')
