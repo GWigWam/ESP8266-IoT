@@ -40,3 +40,29 @@ Example handler:
 		return false
     end
 
+
+### httpclient.lua
+
+Simple http client implementation that handles sending HTTP requests and helps parse the response. Uses HTTP 1.0 and requires `Connection: close`.
+
+Example useage:
+
+	dofile("httpclient.lua")	
+	rq = {
+	    method = "GET",
+	    host = "example.org",
+	    resource = "/",
+	    headers = {
+	        ["Accept"] = "*/*"
+	    }
+	};	
+	local h = function(success, resp)
+		if success then
+		    print(resp.status)
+		    for k, v in pairs(resp.headers) do
+		        print(k..": "..v)
+		    end
+		    print(resp.body or "")
+		end
+	end	
+	sendHttpRequest(rq, h)
