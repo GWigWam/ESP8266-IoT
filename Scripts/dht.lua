@@ -1,8 +1,12 @@
-dhtPin = 4
-dhtPwrPin = 5
+dhtPin = -1
+dhtPwrPin = -1
 
-gpio.mode(dhtPwrPin,gpio.OUTPUT)
-gpio.write(dhtPwrPin,gpio.HIGH)
+function initDHT(dataPin, pwrPin)
+    dhtPin = dataPin
+    dhtPwrPin = pwrPin
+    gpio.mode(dhtPwrPin,gpio.OUTPUT)
+    gpio.write(dhtPwrPin,gpio.HIGH)
+end
 
 function getDHTStats()
     status, temp, humi, temp_dec, humi_dec = dht.read(dhtPin)
@@ -10,7 +14,6 @@ function getDHTStats()
         return true, temp, humi
     else
         restartDHT()
-        flash(lRed,1000)
         return false, -999, -999
     end 
 end
