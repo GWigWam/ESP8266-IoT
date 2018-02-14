@@ -1,8 +1,8 @@
 local timer = nil
 
 local function parse(body)
-    local t = string.match(body, '"temp": ?([0-9\.]+)')
-    local h = string.match(body, '"humi": ?([0-9\.]+)')
+    local t = string.match(body, '"temp": ?([0-9\.\-]+)')
+    local h = string.match(body, '"humi": ?([0-9\.\-]+)')
     local tn = tonumber(t)
     local th = tonumber(h)
     if h and t then
