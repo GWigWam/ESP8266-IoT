@@ -2,33 +2,23 @@ tsField1 = -1
 tsField2 = -1
 
 function setupTS()
-    tsCon = net.createConnection(net.TCP, 0)
- 
-    tsCon:on("receive", function(tsCon, payloadout)
-        if (string.find(payloadout, "Status: 200 OK") ~= nil) then
-            print("Stat send success 200 (OK)");
-            flash(lGrn,50)
-        else
-            print("Stat send failed: "..payloadout)
-            flash(lRed,50)
+    return function()
+        local rq = {
+            method = "POST",
+            host = "api.thingspeak.com",
+            resource = ("/update?api_key="..tsApiKey.."&field1="..tsField1.."&field2="..tsField2)
+        }
+        local hndl = function(succ, resp)
+            if success and string.match(resp.status, "200") then
+                print("Stat sent");
+                flash(lGrn,50)
+            else
+                print("Stat sent failed: "..payloadout)
+                flash(lRed,50)
+            end
         end
-    end)
- 
-    tsCon:on("connection", function(tsCon, payloadout)
-        tsCon:send("GET /update?api_key="..tsApiKey.."&field1="..tsField1.."&field2="..tsField2
-        .. " HTTP/1.1\r\n"
-        .. "Host: api.thingspeak.com\r\n"
-        .. "Connection: close\r\n"
-        .. "Accept: */*\r\n"
-        .. "User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n"
-        .. "\r\n")
-    end)
-    
-    tsCon:on("disconnection", function(tsCon, payloadout)
-        collectgarbage();
-    end)
-    
-    return function() tsCon:connect(80,'api.thingspeak.com') end
+        sendHttpRequest(rq, hndl)
+    end
 end
 
 tsSendFunc = nil
