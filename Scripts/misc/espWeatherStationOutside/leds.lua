@@ -1,19 +1,16 @@
 print("'leds.lua'")
 
-lGrn = 1
-lRed = 2
-lBlu = 3
-lLeds = {lGrn,lRed,lBlu}
+lRed = 5
+lGrn = 7
+lLeds = {lGrn,lRed}
 table.foreach(lLeds,function(k,v)
     gpio.mode(v,gpio.OUTPUT)
     gpio.write(v,gpio.LOW)
 end)
 
 function flash(led, durationMs)
-    table.foreach(lLeds,function(k,v)
-        if v == led then gpio.write(v,gpio.HIGH) else gpio.write(v,gpio.LOW)end
-    end)
+    gpio.write(led, gpio.HIGH)
     tmrDelay(durationMs, function()
-        gpio.write(led,gpio.LOW)
+        gpio.write(led, gpio.LOW)
     end)
 end

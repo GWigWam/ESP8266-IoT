@@ -1,30 +1,39 @@
-uart.setup(0, 921600, 8, 0, 1, 1 )
-print('init.lua')
+stopInit = false
 
-dofile('util.lua')
-dofile('leds.lua')
-dofile('dht.lua')
--- Sets ssid and pwd vars, also sets ThingSpeak private write key
-dofile('secret.lua')
-dofile('wifiEvents.lua')
+pinDHTPwr = 1
+pinDHTData = 2
 
-dofile("ThingSpeakTemp.lua")
-startTSService()
-http = dofile("httpserver.lua")(80)
-dofile("hostDHT.lua")(http)
+local function init()
+    if not stopInit then
+        print("Starting...")
+        dofile('util.lua')
+        
+        dofile('leds.lua')
+        flash(lRed, 100)
+        
+        dofile('secret.lua')
+        wifi.setmode(wifi.STATION)
+        wifi.sta.config({ssid = ssid, pwd = pwd, auto = false})
+        wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(T)
+            print("GOT_IP: "..T.IP)
+            flash(lGrn, 1000)
+        end)
+        if wifi.sta.setmac("AA:AA:AA:E5:82:66") then print('set MAC') else print('set MAC failed') end
+        if wifi.sta.setip({ip = '192.168.2.15', netmask = '255.255.255.0', gateway = '192.168.2.254'}) then print('set IP') else print('set IP failed') end
+        wifi.sta.connect()
 
-wifi.setmode(wifi.STATION)
-wifi.sta.sethostname("ESP8266-WG")
-wifi.sta.config(ssid, pwd)
-wifi.sta.autoconnect(1)
-if not wifi.sta.setmac("AA:AA:AA:E5:82:66") then log('set MAC failed') end
-wifi.sta.connect()
+        dofile("dht.lua")
+        initDHT(pinDHTData, pinDHTPwr)
 
-tryCount = 0
-tmrSemi(1000, function(conTmr)
-    if wifi.sta.getip()== nil then
-        flash(lRed,100)
-        tryCount = tryCount + 1
-        if tryCount < 20 then tryCount = tryCount +1; conTmr:start() else conTmr:unregister() end
-    else conTmr:unregister() end
-end)
+        dofile("httpclient.lua");
+        dofile("ThingSpeakTemp.lua")
+        startTSService()
+
+        httpsrv = dofile("httpserver.lua")(80)
+        dofile("hostDHT.lua")(httpsrv)        
+    end
+end
+
+uart.setup(0, 921600, 8, 0, 1, 1)
+print("'init.lua'")
+tmr.alarm(0,1000,0, init)
