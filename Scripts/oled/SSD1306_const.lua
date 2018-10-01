@@ -1,8 +1,12 @@
 -- lcd1602_const.lua by GWigWam
 print "'lcd1602_const.lua'"
 return {
-    ["SCREENWIDTH"]         = 128,
-    ["SCREENHEIGHT"]        = 64,
+    ["SCREENWIDTH"]         = 128,  -- Screen width in px
+    ["SCREENHEIGHT"]        = 64,   -- Screen height in px
+    ["PIXELCOUNT"]          = 8192, -- (WIDTH * HEIGHT) = (128 * 64)
+    ["SEGMENTSIZE"]         = 8,    -- Segement size in px (1 px == 1 bit, 1 segment == 1 byte)
+    ["PAGECOUNT"]           = 8,    -- A page is a row of adjacent segments
+    ["SEGMENTCOUNT"]        = 1024, -- (PAGECOUNT * SCREENWIDTH) = (8 * 128)
     
     -- Commands
     ["DISPLAYON"]           = 0xAF,
@@ -18,6 +22,8 @@ return {
     ["SETMULTIPLEXRATIO"]   = 0xA8,
     ["SETDISPLAYOFFSET"]    = 0xD3,
     ["SETSTARTLINE"]        = 0x40,
+    ["SETCOLADR"]           = 0x21,
+    ["SETPAGEADR"]          = 0x22,
     
     ["SETDISPLAYCLOCKDIV"]  = 0xD5,
     ["DISPLAYCLOCKDIV_DEF"] = 0x80,
