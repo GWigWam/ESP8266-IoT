@@ -7,6 +7,10 @@ return {
     ["SEGMENTSIZE"]         = 8,    -- Segement size in px (1 px == 1 bit, 1 segment == 1 byte)
     ["PAGECOUNT"]           = 8,    -- A page is a row of adjacent segments
     ["SEGMENTCOUNT"]        = 1024, -- (PAGECOUNT * SCREENWIDTH) = (8 * 128)
+
+    -- Modes
+    ["COMMANDMODE"]         = 0x00,
+    ["WRITEMODE"]           = 0x40,
     
     -- Commands
     ["DISPLAYON"]           = 0xAF,
