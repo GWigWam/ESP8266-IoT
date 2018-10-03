@@ -5,7 +5,7 @@ local function cmd(self, vals)
 
     for i = 1, #vals do
         print(string.format("cmd_%i> 0x%x", i, vals[i]))
-        i2cw({ self.const["COMMANDMODE"], vals[i] })
+        self.i2cw.w({ self.const["COMMANDMODE"], vals[i] })
     end
 end
 
@@ -16,7 +16,7 @@ local function rawWrite(self, vals)
     for i=1,#vals do
         wt[i + 1] = vals[i]
     end
-    i2cw(wt)
+    self.i2cw.w(wt)
 end
 
 local setMemAdrMode = function(self, mode)
@@ -107,6 +107,7 @@ local meta = {
     }
 }
 local state = {
-    const = dofile("SSD1306_const.lua")
+    const = require("SSD1306_const"),
+    i2cw = require("i2cwriter")
 }
 return setmetatable(state, meta)

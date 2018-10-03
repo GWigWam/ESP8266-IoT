@@ -1,5 +1,5 @@
--- lcd1602_const.lua by GWigWam
-print "'lcd1602_const.lua'"
+-- SSD1306_const.lua by GWigWam
+print "'SSD1306_const.lua'"
 return {
     ["SCREENWIDTH"]         = 128,  -- Screen width in px
     ["SCREENHEIGHT"]        = 64,   -- Screen height in px
