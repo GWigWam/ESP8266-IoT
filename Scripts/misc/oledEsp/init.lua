@@ -17,7 +17,7 @@ local function init()
         i2cw.init(sda, scl, i2cAdr)
         oled = require("SSD1306")
         gfx = require("gfx")
-        num = require("gfx_num")
+        font = require("gfx_font")
     end
 end
 
