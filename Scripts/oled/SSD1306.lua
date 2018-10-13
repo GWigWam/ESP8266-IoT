@@ -4,7 +4,6 @@ local function cmd(self, vals)
     if type(vals) ~= "table" then vals = { vals }  end
 
     for i = 1, #vals do
-        print(string.format("cmd_%i> 0x%x", i, vals[i]))
         self.i2cw.w({ self.const["COMMANDMODE"], vals[i] })
     end
 end
@@ -40,6 +39,15 @@ end
 local resetAdr = function(self)
     setColAdr(self, 0, self.const["SCREENWIDTH"] - 1)
     setPageAdr(self, 0, self.const["PAGECOUNT"] - 1)
+end
+
+local function writeAt(self, vals, x0, p0, x1, p1)
+    if x1 == nil then x1 = x0 + 8 end
+    if p1 == nil then p1 = p0 end
+    setColAdr(self, x0, x1)
+    setPageAdr(self, p0, p1)
+    rawWrite(self, vals)
+    resetAdr(self)
 end
 
 local setContrast = function(self, contrast)
@@ -99,7 +107,7 @@ end
 print("'SSD1306.lua'")
 local meta = {
     __index = {
-        cmd = cmd, rawWrite = rawWrite,
+        cmd = cmd, rawWrite = rawWrite, writeAt = writeAt,
         setMemAdrMode = setMemAdrMode, setColAdr = setColAdr, setPageAdr = setPageAdr, resetAdr = resetAdr,
         setContrast = setContrast, setInverse = setInverse,
         setOn = setOn, setOff = setOff,
