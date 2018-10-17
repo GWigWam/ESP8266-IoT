@@ -1,4 +1,4 @@
-wrk.lua
+Scripts/wrk.lua
 
 #Ignore pwd file
 /Scripts/secret.lua

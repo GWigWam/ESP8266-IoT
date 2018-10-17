@@ -1,4 +1,5 @@
 -- lcd1602.lua by GWigWam
+lcdDebug = false
 
 -- Send 4 bits, 4 most significant bits of each byte 'val' in @vals table will be sent.
 --  Pass @rs bool to set register selector (RS) pin: 0 = instruction register, 1 = data register.
@@ -30,7 +31,7 @@ local sendByte = function(self, vals, rs)
         debStr = string.format("%s 0x%02X |", debStr, vals[i])
     end
     send4b(self, tbl, rs)
-    print(debStr)
+    if lcdDebug then print(debStr) end
 end
 
 local init = function(self) -- As specified on page 46 of HD44780U specsheet

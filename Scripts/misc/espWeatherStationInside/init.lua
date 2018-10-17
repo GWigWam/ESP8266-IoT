@@ -12,7 +12,7 @@ local function init()
         lcd:sendStr("Initializing...")
 
         dofile("dht.lua")
-        initDHT(3, 5)
+        initDHT(5, 3)
         
         dofile("httpclient.lc")
         dofile("getDHT.lua")
