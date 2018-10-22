@@ -13,17 +13,32 @@ local function delay(ms, func)
     this.tmrs[#this.tmrs + 1] = ltmr
 end
 
+local disp = {
+    ["sec"] =   { "%02d", 2, 96, 1 },
+    ["min"] =   { "%02d:", 2, 48, 1 },
+    ["hour"] =  { "%02d:", 2, 0, 1 },
+    ["day"] =   { "%02d", 1, 62, 0 },
+    ["mon"] = { "%02d-", 1, 40, 0 },
+    ["year"] =  { "%02d-", 1, 0, 0 }
+}
 local function drawTime()
     s,us,r = rtctime.get()
     if s > 0 then
         dt = rtctime.epoch2cal(s)
-        local str = string.format("%02d:%02d:%02d", dt.hour, dt.min, dt.sec)
-        for f in gfx.iterWriteStr(str, 2, 0, 2) do f() end
+        for k, v in pairs(disp) do
+            local cur = dt[k]
+            if v[5] ~= cur then
+                local str = string.format(v[1], cur)
+                for f in gfx.iterWriteStr(str, v[2], v[3], v[4]) do f() end
+                v[5] = cur
+                tmr.wdclr()
+            end
+        end
     end
 end
 
 this.init = function()
-    delay(1000, function(t)
+    delay(500, function(t)
         drawTime()
         t:start()
     end)    

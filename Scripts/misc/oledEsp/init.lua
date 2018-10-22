@@ -14,6 +14,7 @@ local function initWifi()
             if (ip == nil) then print("DNS fail!") else
                 print("Got nist IP: "..ip)
                 sntp.sync(ip, function(sec, ms, srv, inf) print("Got UTC, Sec: "..sec) end, nil, true)
+                oled:cls()
                 timedisp = require('timedisp')
                 timedisp.init()
             end
