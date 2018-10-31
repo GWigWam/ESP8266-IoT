@@ -14,17 +14,19 @@ local function delay(ms, func)
 end
 
 local disp = {
-    ["sec"] =   { "%02d", 2, 96, 1 },
-    ["min"] =   { "%02d:", 2, 48, 1 },
-    ["hour"] =  { "%02d:", 2, 0, 1 },
+    ["min"] =   { "%02d", 3, 72, 1 },
+    ["hour"] =  { "%02d:", 3, 0, 1 },
     ["day"] =   { "%02d", 1, 62, 0 },
-    ["mon"] = { "%02d-", 1, 40, 0 },
+    ["mon"] =   { "%02d-", 1, 40, 0 },
     ["year"] =  { "%02d-", 1, 0, 0 }
 }
+local inverse = false
 local function drawTime()
     s,us,r = rtctime.get()
     if s > 0 then
         dt = rtctime.epoch2cal(s)
+
+        -- ToString disp:
         for k, v in pairs(disp) do
             local cur = dt[k]
             if v[5] ~= cur then
@@ -33,6 +35,23 @@ local function drawTime()
                 v[5] = cur
                 tmr.wdclr()
             end
+        end
+
+        -- Seconds bar:
+        local v = (dt["min"] % 2 == 0) and 0xC0 or 0x00
+        local len = (dt["sec"] * 2)
+        oled:writeAt({ v, v }, len, 7, len+1, 7)
+
+        -- Hourly refresh:        
+        if inverse then
+            oled:setInverse(false)
+            inverse = false
+        end
+        if dt["min"] + dt["sec"] == 0 then
+            oled:setInverse(true)
+            oled:cls()
+            for k, v in pairs(disp) do disp[k][5] = nil end
+            inverse = true
         end
     end
 end
