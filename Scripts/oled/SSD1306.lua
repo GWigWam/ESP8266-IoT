@@ -50,6 +50,12 @@ local function writeAt(self, vals, x0, p0, x1, p1)
     resetAdr(self)
 end
 
+local setBrightnessRange = function(self, levelStr)
+    local lvl = self.const["DESELECTLVLS"][levelStr];
+    if(lvl == nil) then error("Invalid level string, try: 'LOW', 'MED', 'HIGH', 'ULTRA'.") end
+    cmd(self, { self.const["SETVCOMHDESELECTLVL"], lvl });
+end
+
 local setContrast = function(self, contrast)
     if contrast < 0 or contrast > 255 then error("Contrast must be 0 - 255") end
     cmd(self, { self.const["SETCONTRAST"], contrast })
@@ -94,7 +100,7 @@ local init = function(self)
     cmd(self, self.const["SETCOMSCANDIR_REV"]) -- Set COM Output scan direction
     cmd(self, { self.const["SETCOMPINS"], self.const["COMPINS_DEF"] }) -- Set default hardware COM pin configuration
     cmd(self, { self.const["SETPRECHARGE"], self.const["PRECHARGE_DEF"] }) -- Set pre-charge period to default
-    cmd(self, { self.const["SETVCOMDETECT"], self.const["VCOMDETECT_DEF"] }) -- Set V_Comh deselect voltage level to default
+    setBrightnessRange(self, "MED"); -- Set V_Comh deselect level to 0.77volt (Default value)
     cmd(self, self.const["DISPLAYRAMON"]) -- Display RAM content to screen (Alternative 'DISPLAYRAMOFF')
     cmd(self, self.const["DEACTIVATE_SCROLL"]) -- Deactivate scrolling mode
 
@@ -109,7 +115,7 @@ local meta = {
     __index = {
         cmd = cmd, rawWrite = rawWrite, writeAt = writeAt,
         setMemAdrMode = setMemAdrMode, setColAdr = setColAdr, setPageAdr = setPageAdr, resetAdr = resetAdr,
-        setContrast = setContrast, setInverse = setInverse,
+        setBrightnessRange = setBrightnessRange, setContrast = setContrast, setInverse = setInverse,
         setOn = setOn, setOff = setOff,
         cls = cls, init = init
     }

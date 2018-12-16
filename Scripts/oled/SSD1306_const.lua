@@ -44,8 +44,13 @@ return {
     ["SETPRECHARGE"]        = 0xD9,
     ["PRECHARGE_DEF"]       = 0x22,
 
-    ["SETVCOMDETECT"]       = 0xDB,
-    ["VCOMDETECT_DEF"]      = 0x40,
+    ["SETVCOMHDESELECTLVL"] = 0xDB, -- Affects min / max brightness
+    ["DESELECTLVLS"] = {
+        ["LOW"]             = 0x00, -- 0.65 volt
+        ["MED"]             = 0x20, -- 0.77 volt (default)
+        ["HIGH"]            = 0x30, -- 0.83 volt
+        ["ULTRA"]           = 0x40, -- Not mentioned in datasheet, default in arduino oled lib
+    },
 
     ["DEACTIVATE_SCROLL"]   = 0x2E,
 
