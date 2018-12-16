@@ -15,6 +15,7 @@ local function initWifi()
                 print("Got nist IP: "..ip)
                 sntp.sync(ip, function(sec, ms, srv, inf) print("Got UTC, Sec: "..sec) end, nil, true)
                 oled:cls()
+                oled:setBrightnessRange("LOW");
                 oled:setContrast(1)
                 timedisp = require('timedisp')
                 timedisp.init()
