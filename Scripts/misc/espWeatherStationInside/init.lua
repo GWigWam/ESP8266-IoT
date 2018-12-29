@@ -6,7 +6,7 @@ local function init()
 
         dofile("util.lua")
         dofile("i2c.lc")
-        i2cinit()
+        i2cinit(1, 2, 0x3F)
         lcd = dofile("lcd1602.lc")
         lcd:init()
         lcd:sendStr("Initializing...")
