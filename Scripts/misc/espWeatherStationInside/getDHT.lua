@@ -39,13 +39,16 @@ local function servDHT()
             if string.match(resp.status, "200") and resp.body then
                 t = parse(resp.body)
             else
-                t = resp.status 
+                t = resp.status
+                success = false
             end
         else
             t = "Connection failed"
         end
         lcdLine0 = t
         updateLcd()
+        local intrvl = success and refInterval or 10000
+        timer:interval(intrvl)
     end
     sendHttpRequest(rq, hndl)
 end
@@ -66,9 +69,14 @@ function refreshStats()
 end
 
 function setupDHTRefresh()
-    timer = tmrRepeat(refInterval, refreshStats)
+    if timer == nil then
+        timer = tmr.create()
+        timer:register(refInterval, tmr.ALARM_AUTO, refreshStats)
+        timer:start()
+    end
 end
 
 function stopDHTRefresh()
-    timer:stop()
+    timer:unregister()
+    timer = nil
 end
