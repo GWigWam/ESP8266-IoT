@@ -3,6 +3,7 @@ print("'timedisp.lua'")
 local this = {}
 local oled = require('SSD1306')
 local gfx = require('gfx')
+local timezone = nil
 
 this.tmrs = {}
 
@@ -26,6 +27,8 @@ local function drawTime()
     if s > 0 then
         dt = rtctime.epoch2cal(s)
 
+        dt["hour"] = (dt["hour"] + timezone.getOffset() + 1) % 24
+        
         -- ToString disp:
         for k, v in pairs(disp) do
             local cur = dt[k]
@@ -56,11 +59,12 @@ local function drawTime()
     end
 end
 
-this.init = function()
+this.init = function(tzPin)
+    timezone = require('timezoneSwitch')(tzPin)
     delay(500, function(t)
         drawTime()
         t:start()
-    end)    
+    end)
 end
 
 this.stop = function()

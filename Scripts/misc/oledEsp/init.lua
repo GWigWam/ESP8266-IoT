@@ -3,6 +3,7 @@ stopInit = false
 local sda = 2
 local scl = 1
 local i2cAdr = 0x3C
+local tzPin = 3
 
 local function initWifi()
     dofile('secret.lua')
@@ -18,7 +19,7 @@ local function initWifi()
                 oled:setBrightnessRange("LOW");
                 oled:setContrast(1)
                 timedisp = require('timedisp')
-                timedisp.init()
+                timedisp.init(tzPin)
             end
         end)
     end)
