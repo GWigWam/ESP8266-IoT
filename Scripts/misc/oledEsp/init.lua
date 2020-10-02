@@ -4,6 +4,7 @@ local sda = 2
 local scl = 1
 local i2cAdr = 0x3C
 local tzPin = 5
+local timeurl = "pool.ntp.org"
 
 local function initWifi()
     dofile('secret.lua')
@@ -11,7 +12,7 @@ local function initWifi()
     wifi.sta.config({ssid = ssid, pwd = pwd, auto = true})
     wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(T)
         print("GOT_IP: "..T.IP)
-        net.dns.resolve("time.nist.gov", function(sk, ip)
+        net.dns.resolve(timeurl, function(sk, ip)
             if (ip == nil) then print("DNS fail!") else
                 print("Got nist IP: "..ip)
 
