@@ -3,7 +3,7 @@ stopInit = false
 local sda = 2
 local scl = 1
 local i2cAdr = 0x3C
-local tzPin = 3
+local tzPin = 5
 
 local function initWifi()
     dofile('secret.lua')
@@ -14,12 +14,18 @@ local function initWifi()
         net.dns.resolve("time.nist.gov", function(sk, ip)
             if (ip == nil) then print("DNS fail!") else
                 print("Got nist IP: "..ip)
-                sntp.sync(ip, function(sec, ms, srv, inf) print("Got UTC, Sec: "..sec) end, nil, true)
-                oled:cls()
-                oled:setBrightnessRange("LOW");
-                oled:setContrast(1)
-                timedisp = require('timedisp')
-                timedisp.init(tzPin)
+
+                local start = function()
+                    oled:cls()
+                    oled:setBrightnessRange("LOW");
+                    oled:setContrast(1)
+                    timedisp = require('timedisp')
+                    timedisp.init(tzPin)
+                end
+                
+                local suc = function(sec, ms, srv, inf) print("Got UTC, Sec: "..sec); start(); end
+                local err = function(code, msg) print("SNTP err: "..code.." ("..(msg or "no msg")..")") end
+                sntp.sync(ip, suc, err, false)
             end
         end)
     end)
