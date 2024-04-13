@@ -26,8 +26,11 @@ local function drawTime()
     s,us,r = rtctime.get()
     if s > 0 then
         dt = rtctime.epoch2cal(s)
-
         dt["hour"] = (dt["hour"] + timezone.getOffset() + 1) % 24
+        
+        -- Full redraw every 5min
+        local fullRedraw = function() for k, v in pairs(disp) do disp[k][5] = nil end end
+        if (dt["min"] % 5 == 0) and (dt["sec"] == 30) then fullRedraw() end
         
         -- ToString disp:
         for k, v in pairs(disp) do
@@ -44,8 +47,8 @@ local function drawTime()
         local v = (dt["min"] % 2 == 0) and 0xC0 or 0x00
         local len = (dt["sec"] * 2)
         oled:writeAt({ v, v }, len, 7, len+1, 7)
-
-        -- Hourly refresh:        
+        
+        -- Hourly refresh:
         if inverse then
             oled:setInverse(false)
             inverse = false
@@ -53,7 +56,7 @@ local function drawTime()
         if dt["min"] + dt["sec"] == 0 then
             oled:setInverse(true)
             oled:cls()
-            for k, v in pairs(disp) do disp[k][5] = nil end
+            fullRedraw()
             inverse = true
         end
     end
